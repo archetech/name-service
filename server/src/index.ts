@@ -44,10 +44,10 @@ const logins: Record<string, {
 }> = {};
 
 const roles = {
-    owner: 'archon-social',
-    admin: 'archon-social-admin',
-    moderator: 'archon-social-moderator',
-    member: 'archon-social-member',
+    owner: 'archon.social',
+    admin: 'archon.social.admin',
+    moderator: 'archon.social.moderator',
+    member: 'archon.social.member',
 };
 
 app.use(morgan('dev'));
@@ -55,7 +55,7 @@ app.use(express.json());
 
 // Session setup
 app.use(session({
-    secret: 'archon-social',
+    secret: 'archon.social',
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS
