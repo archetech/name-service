@@ -1034,18 +1034,26 @@ app.post('/api/credential/request', isAuthenticated, async (req: Request, res: R
 
         let credentialDid: string;
 
+        // Schema DID for membership credentials
+        const MEMBERSHIP_SCHEMA_DID = process.env.AD_MEMBERSHIP_SCHEMA_DID || 'did:cid:bagaaiera6arptfgfleekvmssqok36mnxuun6newsz7fzwpd5szujnh2kc75a';
+        
         if (user.credentialDid) {
-            // Update existing credential - need full VC with issuer
+            // Update existing credential with schema-based format
             const vc: any = {
-                "@context": ["https://www.w3.org/2018/credentials/v1"],
-                type: ['VerifiableCredential', 'ArchonSocialNameCredential'],
+                "@context": [
+                    "https://www.w3.org/ns/credentials/v2",
+                    "https://archon.social/credentials/membership/v1"
+                ],
+                type: ['VerifiableCredential', 'ArchonSocialCredential', 'MembershipCredential'],
                 issuer: ownerDID,
                 validFrom: new Date().toISOString(),
+                credentialSchema: {
+                    id: MEMBERSHIP_SCHEMA_DID,
+                    type: "JsonSchema"
+                },
                 credentialSubject: {
                     id: userDid,
-                    name: `@${user.name}`,
-                    platform: 'archon.social',
-                    registeredAt: user.firstLogin
+                    memberName: `@${user.name}`
                 }
             };
             console.log(`Updating credential ${user.credentialDid}...`);
@@ -1056,15 +1064,13 @@ app.post('/api/credential/request', isAuthenticated, async (req: Request, res: R
             credentialDid = user.credentialDid;
             console.log(`Updated credential ${credentialDid} for ${user.name}`);
         } else {
-            // Issue new credential using bindCredential then issueCredential
-            console.log(`Binding new credential for ${userDid}...`);
+            // Issue new credential using schema + bindCredential + issueCredential
+            console.log(`Binding new credential for ${userDid} using schema ${MEMBERSHIP_SCHEMA_DID}...`);
             const boundCredential = await keymaster.bindCredential(userDid, {
+                schema: MEMBERSHIP_SCHEMA_DID,
                 validFrom: new Date().toISOString(),
                 claims: {
-                    name: `@${user.name}`,
-                    platform: 'archon.social',
-                    registeredAt: user.firstLogin,
-                    credentialType: 'ArchonSocialNameCredential'
+                    memberName: `@${user.name}`
                 }
             });
             console.log(`Bound credential, now issuing...`);
