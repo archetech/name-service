@@ -406,7 +406,7 @@ function ViewLogin() {
                             </Typography>
                         </TableCell>
                         <TableCell>
-                            <Button variant="contained" color="primary" onClick={() => copyToClipboard(challengeDID)} disabled={challengeCopied}>
+                            <Button variant="outlined" onClick={() => copyToClipboard(challengeDID)} disabled={challengeCopied}>
                                 Copy
                             </Button>
                         </TableCell>
@@ -429,7 +429,7 @@ function ViewLogin() {
                             />
                         </TableCell>
                         <TableCell>
-                            <Button variant="contained" color="primary" onClick={login} disabled={!responseDID || loggingIn}>
+                            <Button variant="outlined" onClick={login} disabled={!responseDID || loggingIn}>
                                 Login
                             </Button>
                         </TableCell>
@@ -664,6 +664,8 @@ function ViewProfile() {
     const [profile, setProfile] = useState<any>(null);
     const [currentName, setCurrentName] = useState<string>("");
     const [newName, setNewName] = useState<string>("");
+    const [nameError, setNameError] = useState<string>("");
+    const [nameAvailable, setNameAvailable] = useState<boolean | null>(null);
 
     useEffect(() => {
         const init = async () => {
@@ -693,6 +695,7 @@ function ViewProfile() {
     }, [did, navigate]);
 
     async function saveName() {
+        setNameError('');
         try {
             const name = newName.trim();
             await api.put(`/profile/${profile.did}/name`, { name });
@@ -701,7 +704,26 @@ function ViewProfile() {
             profile.name = name;
         }
         catch (error: any) {
-            window.alert(error);
+            const message = error.response?.data?.message || error.response?.data?.error || 'Failed to save name';
+            setNameError(message);
+        }
+    }
+
+    async function checkName() {
+        setNameError('');
+        setNameAvailable(null);
+        try {
+            const name = newName.trim().toLowerCase();
+            await api.get(`/name/${name}`);
+            setNameAvailable(false);
+            setNameError('Name already taken');
+        }
+        catch (error: any) {
+            if (error.response?.status === 404) {
+                setNameAvailable(true);
+            } else {
+                setNameError('Failed to check name');
+            }
         }
     }
 
@@ -751,29 +773,44 @@ function ViewProfile() {
                         <TableCell>Name:</TableCell>
                         <TableCell>
                             {profile.isUser ? (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                    <TextField
-                                        label=""
-                                        value={newName}
-                                        onChange={(e) => setNewName(e.target.value)}
-                                        slotProps={{
-                                            htmlInput: {
-                                                maxLength: 20,
-                                            },
-                                        }}
-                                        sx={{ width: 300 }}
-                                        margin="normal"
-                                        fullWidth
-                                    />
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={saveName}
-                                        disabled={newName === currentName}
-                                    >
-                                        Save
-                                    </Button>
-                                </Box>
+                                <>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                                        <TextField
+                                            label=""
+                                            value={newName}
+                                            onChange={(e) => { setNewName(e.target.value); setNameError(''); setNameAvailable(null); }}
+                                            slotProps={{
+                                                htmlInput: {
+                                                    maxLength: 20,
+                                                },
+                                            }}
+                                            sx={{ width: 300 }}
+                                            margin="normal"
+                                            fullWidth
+                                        />
+                                        <Button
+                                            variant="outlined"
+                                            onClick={checkName}
+                                            disabled={!newName.trim() || newName === currentName}
+                                        >
+                                            Check
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            onClick={saveName}
+                                            disabled={newName === currentName}
+                                        >
+                                            Save
+                                        </Button>
+                                    </Box>
+                                    {nameError && (
+                                        <Alert severity="error" sx={{ mt: 1 }}>{nameError}</Alert>
+                                    )}
+                                    {nameAvailable && (
+                                        <Alert severity="success" sx={{ mt: 1 }}>Name is available!</Alert>
+                                    )}
+                                </>
                             ) : (
                                 currentName
                             )}

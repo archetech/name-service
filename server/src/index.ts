@@ -763,7 +763,7 @@ app.post('/api/credential/request', isAuthenticated, async (req: Request, res: R
                 },
                 credentialSubject: {
                     id: userDid,
-                    memberName: `${user.name}@${SERVICE_DOMAIN}`
+                    name: `${user.name}@${SERVICE_DOMAIN}`
                 }
             };
             console.log(`Updating credential ${user.credentialDid}...`);
@@ -780,7 +780,7 @@ app.post('/api/credential/request', isAuthenticated, async (req: Request, res: R
                 schema: MEMBERSHIP_SCHEMA_DID,
                 validFrom: new Date().toISOString(),
                 claims: {
-                    memberName: `${user.name}@${SERVICE_DOMAIN}`
+                    name: `${user.name}@${SERVICE_DOMAIN}`
                 }
             });
             console.log(`Bound credential, now issuing...`);
