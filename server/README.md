@@ -36,7 +36,6 @@ If `NS_SERVE_CLIENT=true` and you have built the React app (`npm run build` in c
 - `/api/profile/:did` – Get user profile.
 - `/api/profile/:did/name` – Get/set user's @name.
 - `/api/name/:name` – Resolve a name to DID.
-- `/api/name/:name/available` – Check name availability.
 
 **Credentials**
 - `/api/credential` – Get user's credential status.

@@ -55,14 +55,7 @@ DID=$(echo $AUTH | jq -r '.userDID')
 
 ## Profile Management
 
-### Check Name Availability
-
-```bash
-curl -s $SERVICE_URL/api/name/desired-name/available | jq .
-# Returns: {"name":"desired-name","available":true}
-```
-
-### Set Your @name
+### Set Your Name
 
 ```bash
 curl -s -b cookies.txt \
@@ -158,21 +151,14 @@ curl -s -b cookies.txt -c cookies.txt \
 DID=$(curl -s -b cookies.txt $SERVICE_URL/api/check-auth | jq -r '.userDID')
 echo "Authenticated as: $DID"
 
-# 5. Check name availability
-AVAILABLE=$(curl -s $SERVICE_URL/api/name/$NAME/available | jq -r '.available')
-if [ "$AVAILABLE" != "true" ]; then
-  echo "Name '$NAME' is not available"
-  exit 1
-fi
-
-# 6. Set name
+# 5. Set name
 echo "Setting name to @$NAME..."
 curl -s -b cookies.txt \
   -X PUT "$SERVICE_URL/api/profile/$DID/name" \
   -H "Content-Type: application/json" \
   -d "{\"name\":\"$NAME\"}"
 
-# 7. Request credential
+# 6. Request credential
 echo "Requesting credential..."
 curl -s -b cookies.txt -X POST $SERVICE_URL/api/credential/request | jq .
 
@@ -194,7 +180,6 @@ rm cookies.txt
 | `/api/profile/:did` | GET | Yes | Get user profile |
 | `/api/profile/:did/name` | PUT | Yes | Set your name |
 | `/api/name/:name` | GET | No | Resolve name to DID |
-| `/api/name/:name/available` | GET | No | Check availability |
 | `/api/credential` | GET | Yes | Get your credential |
 | `/api/credential/request` | POST | Yes | Request/update credential |
 | `/api/registry` | GET | No | Full name registry |

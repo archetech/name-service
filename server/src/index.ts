@@ -512,30 +512,6 @@ app.get('/api/registry', async (_: Request, res: Response) => {
     }
 });
 
-// Check if a name is available
-app.get('/api/name/:name/available', async (req: Request, res: Response) => {
-    try {
-        const name = (req.params.name as string).trim().toLowerCase();
-        const currentDb = db.loadDb();
-
-        let available = true;
-        if (currentDb.users) {
-            for (const user of Object.values(currentDb.users)) {
-                if (user.name?.toLowerCase() === name) {
-                    available = false;
-                    break;
-                }
-            }
-        }
-
-        res.json({ name, available });
-    }
-    catch (error) {
-        console.log(error);
-        res.status(500).send(String(error));
-    }
-});
-
 // Resolve a name to a DID
 app.get('/api/name/:name', async (req: Request, res: Response) => {
     try {
