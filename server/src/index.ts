@@ -187,7 +187,7 @@ async function resolveLightningEndpoint(name: string): Promise<{ did: string; en
     const did = findNameDid(name);
     if (!did) return null;
 
-    const didDoc = await keymaster.resolveDID(did);
+    const didDoc: any = await keymaster.resolveDID(did);
     if (!didDoc?.didDocument?.service) return null;
 
     const lightning = didDoc.didDocument.service.find(
