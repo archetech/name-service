@@ -620,11 +620,9 @@ app.put('/api/name', async (req: Request, res: Response) => {
             ok: true,
             name: trimmedName,
             did,
-            credential: {
-                credentialDid: user.credentialDid,
-                credentialIssuedAt: user.credentialIssuedAt,
-                credential,
-            }
+            credentialDid: user.credentialDid,
+            credentialIssuedAt: user.credentialIssuedAt,
+            credential,
         });
     }
     catch (error) {
