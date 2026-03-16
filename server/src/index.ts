@@ -770,48 +770,7 @@ app.get('/api/member/:name', async (req: Request, res: Response) => {
         // Fetch DID document from gatekeeper
         const didDoc = await keymaster.resolveDID(memberDid);
 
-        res.json({
-            name,
-            did: memberDid,
-            didDocument: didDoc
-        });
-    }
-    catch (error: any) {
-        console.log(error);
-        res.status(500).json({ error: error.message || String(error) });
-    }
-});
-
-// Legacy route (kept for backward compatibility)
-app.get('/member/:name', async (req: Request, res: Response) => {
-    try {
-        const name = (req.params.name as string).trim().toLowerCase();
-        const currentDb = db.loadDb();
-
-        let memberDid: string | null = null;
-
-        if (currentDb.users) {
-            for (const [did, user] of Object.entries(currentDb.users)) {
-                if (user.name?.toLowerCase() === name) {
-                    memberDid = did;
-                    break;
-                }
-            }
-        }
-
-        if (!memberDid) {
-            res.status(404).json({ error: 'Name not found', name });
-            return;
-        }
-
-        // Fetch DID document from gatekeeper
-        const didDoc = await keymaster.resolveDID(memberDid);
-
-        res.json({
-            name,
-            did: memberDid,
-            didDocument: didDoc
-        });
+        res.json(didDoc);
     }
     catch (error: any) {
         console.log(error);

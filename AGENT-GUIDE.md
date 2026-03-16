@@ -83,12 +83,6 @@ curl -s $SERVICE_URL/api/name/some-name | jq .
 # Returns: {"name":"some-name","did":"did:cid:..."}
 ```
 
-### Get Member's DID Document
-
-```bash
-curl -s $SERVICE_URL/member/some-name | jq .
-```
-
 ### Get Full Registry
 
 ```bash
@@ -120,7 +114,7 @@ For browser-based clients, the session-based flow is also available:
 | `/api/profile/:did/name` | PUT | Session | Set your name |
 | `/api/credential` | GET | Session | Get your credential |
 | `/api/registry` | GET | No | Full name registry |
-| `/member/:name` | GET | No | Member DID document |
+| `/api/member/:name` | GET | No | Member DID document |
 
 Name requirements:
 - 3-32 characters

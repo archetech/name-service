@@ -1048,10 +1048,10 @@ function ViewMember() {
                     textAlign: 'center'
                 }}>
                     <Typography variant="h4" sx={{ fontWeight: 600, color: '#2c3e50', mb: 1 }}>
-                        {memberData?.name}@{serviceDomain}
+                        {name}@{serviceDomain}
                     </Typography>
                     <Typography variant="body1" sx={{ fontFamily: 'monospace', color: '#666', wordBreak: 'break-all' }}>
-                        {memberData?.did}
+                        {memberData?.id}
                     </Typography>
                 </Box>
 
@@ -1069,7 +1069,7 @@ function ViewMember() {
                         fontSize: '0.85rem',
                         fontFamily: 'Monaco, Consolas, monospace'
                     }}>
-                        {JSON.stringify(memberData?.didDocument, null, 2)}
+                        {JSON.stringify(memberData, null, 2)}
                     </pre>
                 </Box>
 
@@ -1079,7 +1079,7 @@ function ViewMember() {
                     </Button>
                     <Button 
                         component="a" 
-                        href={`https://explorer.archon.technology/search?did=${memberData?.did}`}
+                        href={`https://explorer.archon.technology/search?did=${memberData?.id}`}
                         target="_blank"
                         variant="outlined"
                     >

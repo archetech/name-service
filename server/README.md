@@ -47,7 +47,7 @@ If `NS_SERVE_CLIENT=true` and you have built the React app (`npm run build` in c
 
 **Registry**
 - `/api/registry` – Get full name→DID registry.
-- `/member/:name` – Get member's DID document by name.
+- `/api/member/:name` – Get member's DID document by name.
 - `/directory.json` – Public registry JSON.
 
 **Admin (owner only)**
