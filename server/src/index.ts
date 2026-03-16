@@ -484,6 +484,50 @@ app.put('/api/profile/:did/name', isAuthenticated, async (req: Request, res: Res
     }
 });
 
+// Delete name and revoke credential
+app.delete('/api/profile/:did/name', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+        const did = req.params.did as string;
+
+        if (!req.session.user || req.session.user.did !== did) {
+            res.status(403).json({ message: 'Forbidden' });
+            return;
+        }
+
+        const currentDb = db.loadDb();
+        if (!currentDb.users || !currentDb.users[did]) {
+            res.status(404).send('Not found');
+            return;
+        }
+
+        const user = currentDb.users[did];
+        const deletedName = user.name;
+
+        // Revoke credential if one exists
+        if (user.credentialDid) {
+            try {
+                await keymaster.setCurrentId(SERVICE_NAME);
+                await keymaster.revokeCredential(user.credentialDid);
+                console.log(`Revoked credential ${user.credentialDid} for ${deletedName}`);
+            } catch (err) {
+                console.log(`Failed to revoke credential: ${err}`);
+            }
+            delete user.credentialDid;
+            delete user.credentialName;
+            delete user.credentialIssuedAt;
+        }
+
+        delete user.name;
+        db.writeDb(currentDb);
+
+        res.json({ ok: true, message: `name '${deletedName}' deleted and credential revoked` });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send(String(error));
+    }
+});
+
 // Export name registry for IPNS publication
 app.get('/api/registry', async (_: Request, res: Response) => {
     try {

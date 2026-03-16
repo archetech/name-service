@@ -709,6 +709,23 @@ function ViewProfile() {
         }
     }
 
+    async function deleteName() {
+        if (!window.confirm(`Delete name '${currentName}'? This will also revoke your credential.`)) {
+            return;
+        }
+        setNameError('');
+        try {
+            await api.delete(`/profile/${profile.did}/name`);
+            setCurrentName('');
+            setNewName('');
+            profile.name = '';
+        }
+        catch (error: any) {
+            const message = error.response?.data?.message || error.response?.data?.error || 'Failed to delete name';
+            setNameError(message);
+        }
+    }
+
     async function checkName() {
         setNameError('');
         setNameAvailable(null);
@@ -803,6 +820,15 @@ function ViewProfile() {
                                         >
                                             Save
                                         </Button>
+                                        {currentName && (
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={deleteName}
+                                            >
+                                                Delete
+                                            </Button>
+                                        )}
                                     </Box>
                                     {nameError && (
                                         <Alert severity="error" sx={{ mt: 1 }}>{nameError}</Alert>
