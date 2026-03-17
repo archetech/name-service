@@ -20,6 +20,7 @@ import { DatabaseInterface, User } from './db/interfaces.js';
 import { DbJson } from './db/json.js';
 import { DbSqlite } from './db/sqlite.js';
 import { createOAuthRoutes } from './oauth/index.js';
+import websRoutes from './webs/index.js';
 
 let keymaster: Keymaster | KeymasterClient;
 let db: DatabaseInterface;
@@ -282,6 +283,10 @@ async function getMemberByDID(did: string): Promise<any> {
 const oauthRouter = createOAuthRoutes(() => keymaster, getMemberByDID);
 app.use('/oauth', oauthRouter);
 console.log('OAuth routes mounted at /oauth');
+
+// Mount did:webs routes
+app.use(websRoutes);
+console.log('did:webs routes mounted');
 
 app.get('/api/version', async (_: Request, res: Response) => {
     try {
