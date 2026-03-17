@@ -1052,8 +1052,8 @@ function ViewMember() {
                     textAlign: 'center'
                 }}>
                     {memberData?.didDocument?.id && (
-                        <a href={`archon://accept?alias=${name}&did=${memberData.didDocument.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                            <QRCodeSVG value={`archon://accept?alias=${name}&did=${memberData.didDocument.id}`} />
+                        <a href={`archon://accept?alias=${name}@${serviceDomain}&did=${memberData.didDocument.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                            <QRCodeSVG value={`archon://accept?alias=${name}@${serviceDomain}&did=${memberData.didDocument.id}`} />
                             <Typography variant="body1" sx={{ fontFamily: 'monospace', color: '#666', wordBreak: 'break-all', mt: 2 }}>
                                 {memberData.didDocument.id}
                             </Typography>
